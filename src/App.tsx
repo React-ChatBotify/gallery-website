@@ -1,5 +1,5 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -9,7 +9,7 @@ import NavigationBar from './components/NavigationBar/NavigationBar';
 import { AuthProvider } from './context/AuthContext';
 import { GlobalModalProvider } from './context/GlobalModalContext';
 import { useNotify } from './hooks/useNotify';
-import i18n from './i18n';
+import { i18n } from './i18n'; // Updated import
 import ErrorPage from './pages/Error';
 import HomePage from './pages/Home';
 import LoginProcessPage from './pages/LoginProcess';
@@ -30,10 +30,6 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    i18n.loadNamespaces('components/globalmodal');
-  }, []);
-
-  useEffect(() => {
     const message = localStorage.getItem('logoutMessage');
     if (message) {
       setTimeout(() => {
@@ -43,13 +39,6 @@ const App: React.FC = () => {
     }
   }, [notify]);
 
-  const storedLanguage = localStorage.getItem('RCBG_SELECTED_LANGUAGE');
-  if (storedLanguage) {
-    i18n.changeLanguage(storedLanguage);
-  } else {
-    i18n.changeLanguage('en');
-  }
-
   const toggleTheme = () => {
     setIsDarkMode((prev) => {
       localStorage.setItem('RCBG_IS_DARK_MODE', String(!prev));
@@ -57,10 +46,18 @@ const App: React.FC = () => {
     });
   };
 
+  const handleChangeLanguage = async (newLang: string) => {
+    await i18n.changeLanguage(newLang);
+    localStorage.setItem('RCBG_SELECTED_LANGUAGE', newLang);
+  };
+
   // Define Navbar wrapper
   const NavbarWrapper = () => (
     <div>
-      <NavigationBar toggleTheme={toggleTheme} />
+      <NavigationBar
+        toggleTheme={toggleTheme}
+        handleChangeLanguage={handleChangeLanguage}
+      />
       <Outlet />
     </div>
   );
@@ -97,9 +94,7 @@ const App: React.FC = () => {
           <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
             <GlobalModalProvider>
               <CssBaseline />
-              <Suspense fallback={<div></div>}>
-                <RouterProvider router={router} />
-              </Suspense>
+              <RouterProvider router={router} />
               <GlobalModal />
             </GlobalModalProvider>
           </ThemeProvider>

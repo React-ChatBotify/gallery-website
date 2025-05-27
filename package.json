@@ -74,8 +74,10 @@
     "lint": "eslint --fix \"{src,__tests__,types}/**/*.{ts,tsx,js,json}\"",
     "format": "prettier --write \"{src,__tests__,types}/**/*.{ts,tsx,js,json}\"",
     "test": "node ./test/RunTests.js",
-    "build": "vite build",
-    "start": "vite",
+    "build": "node scripts/generate-i18n-indexes.js && vite build",
+    "dev": "npm-run-all --parallel dev:vite dev:i18n-watch",
+    "dev:vite": "vite",
+    "dev:i18n-watch": "node scripts/generate-i18n-indexes.js --watch",
     "preview": "vite preview",
     "prepare": "husky install"
   },

@@ -35,10 +35,12 @@ import { galleryApiFetch } from '@/utils';
  * - Mobile drawer with equivalent navigation and utility actions
  *
  * @param toggleTheme function to switch between light and dark modes
+ * @param handleChangeLanguage function to change the application language
  */
 const NavigationBar: React.FC<{
   toggleTheme: () => void;
-}> = ({ toggleTheme }) => {
+  handleChangeLanguage: (newLang: string) => Promise<void>;
+}> = ({ toggleTheme, handleChangeLanguage }) => {
   // initialize translation for this component namespace
   const { t, i18n } = useTranslation('components/navigationbar');
 
@@ -86,14 +88,6 @@ const NavigationBar: React.FC<{
    * Changes the application language, updates localStorage,
    * applies to i18n and shows a notification.
    *
-   * @param lang locale code to switch to (e.g. 'en', 'zh')
-   */
-  const changeLanguage = (lang: string) => {
-    localStorage.setItem('RCBG_SELECTED_LANGUAGE', lang);
-    i18n.changeLanguage(lang);
-    notify(t('navigation_bar.language_updated_message'));
-  };
-
   // shared style for navigation links
   const generalNavLinkSx = {
     '&:visited': {
@@ -269,16 +263,18 @@ const NavigationBar: React.FC<{
               sx={{ mt: 1, zIndex: 9001 }}
             >
               <MenuItem
-                onClick={() => {
-                  changeLanguage('en');
+                onClick={async () => {
+                  await handleChangeLanguage('en');
+                  notify(t('navigation_bar.language_updated_message'));
                   setLanguageMenuAnchor(null);
                 }}
               >
                 🇺🇸 English
               </MenuItem>
               <MenuItem
-                onClick={() => {
-                  changeLanguage('zh');
+                onClick={async () => {
+                  await handleChangeLanguage('zh');
+                  notify(t('navigation_bar.language_updated_message'));
                   setLanguageMenuAnchor(null);
                 }}
               >
@@ -396,16 +392,18 @@ const NavigationBar: React.FC<{
                 sx={{ mt: 1, zIndex: 9001 }}
               >
                 <MenuItem
-                  onClick={() => {
-                    changeLanguage('en');
+                  onClick={async () => {
+                    await handleChangeLanguage('en');
+                    notify(t('navigation_bar.language_updated_message'));
                     setLanguageMenuAnchor(null);
                   }}
                 >
                   🇺🇸 English
                 </MenuItem>
                 <MenuItem
-                  onClick={() => {
-                    changeLanguage('zh');
+                  onClick={async () => {
+                    await handleChangeLanguage('zh');
+                    notify(t('navigation_bar.language_updated_message'));
                     setLanguageMenuAnchor(null);
                   }}
                 >
